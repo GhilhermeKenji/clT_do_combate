@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Catálogo de equipamentos para artes marciais — CLTS do Combate.">
+<title>Catálogo | CLTS do Combate</title>
+<link rel="stylesheet" href="catalogo.css">
+</head>
+<body>
+<header class="header">
+  <a href="Index.html" class="logo"><img src="images/logo-clts.png" alt="CLTS do Combate"></a>
+  <nav class="main-nav">
+    <a href="Index.html">Início</a><a href="catalogo.html?modalidade=jiu-jitsu">Jiu-Jitsu</a>
+    <a href="catalogo.html?modalidade=judo">Judô</a><a href="catalogo.html?modalidade=muay-thai">Muay Thai</a>
+    <a href="catalogo.html?modalidade=boxe">Boxe</a><a href="catalogo.html?modalidade=karate">Karatê</a>
+    <a href="catalogo.html?modalidade=taekwondo">Taekwondo</a><a href="catalogo.html?modalidade=mma">MMA</a>
+  </nav>
+  <div class="header-actions">
+    <a href="login.html" class="account" id="accountButton">♙ <span>MINHA CONTA</span></a>
+    <button class="cart-btn" type="button">🛒 <span>CARRINHO</span><b id="cartCount" data-cart-count>0</b></button>
+  </div>
+</header>
+<main>
+  <div class="category-buttons">
+    <a href="catalogo.html" class="category-btn" data-category="todos">Todos</a>
+    <a href="catalogo.html?modalidade=jiu-jitsu" class="category-btn" data-category="jiu-jitsu">Jiu-Jitsu</a>
+    <a href="catalogo.html?modalidade=judo" class="category-btn" data-category="judo">Judô</a>
+    <a href="catalogo.html?modalidade=muay-thai" class="category-btn" data-category="muay-thai">Muay Thai</a>
+    <a href="catalogo.html?modalidade=boxe" class="category-btn" data-category="boxe">Boxe</a>
+    <a href="catalogo.html?modalidade=karate" class="category-btn" data-category="karate">Karatê</a>
+    <a href="catalogo.html?modalidade=taekwondo" class="category-btn" data-category="taekwondo">Taekwondo</a>
+    <a href="catalogo.html?modalidade=mma" class="category-btn" data-category="mma">MMA</a>
+    <a href="catalogo.html?modalidade=acessorios" class="category-btn" data-category="acessorios">Acessórios</a>
+  </div>
+  <section class="catalog">
+    <div class="catalog-top"><div><h1 id="catalog-title">Todos os produtos</h1><p id="product-count">0 produtos encontrados</p></div>
+      <div class="catalog-tools"><div class="search-wrap"><input id="search" type="search" placeholder="Pesquisar produto..." autocomplete="off"></div>
+      <select id="sort"><option value="default">Ordenar</option><option value="price-low">Menor preço</option><option value="price-high">Maior preço</option><option value="name">Nome A-Z</option></select></div>
+    </div>
+    <div id="products-grid" class="products-grid"></div>
+    <div id="empty-state" class="empty-state"><div class="empty-icon">×</div><h2>Nenhum produto encontrado</h2><p>Tente pesquisar outro produto ou escolher outra categoria.</p></div>
+  </section>
+</main>
+<footer><strong>CLTS DO COMBATE</strong><p>Equipamentos para artes marciais.</p></footer>
+<script src="produtos.js"></script><script src="catalogo.js"></script><script src="Script.js"></script>
+</body></html>

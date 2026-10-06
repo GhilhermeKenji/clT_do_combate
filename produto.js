@@ -1,0 +1,13 @@
+"use strict";
+const paramsP=new URLSearchParams(location.search), catP=paramsP.get("categoria"), idP=paramsP.get("id");
+const listaP=CLTS.obterProdutos();
+const produtoP=listaP.find(p=>String(p.id)===String(idP)&&(p.categoria||"")===catP);
+const els={name:document.getElementById("product-name"),cat:document.getElementById("product-category"),desc:document.getElementById("product-description"),price:document.getElementById("product-price"),img:document.getElementById("product-main-image"),code:document.getElementById("product-code"),qty:document.getElementById("quantity"),minus:document.getElementById("quantity-minus"),plus:document.getElementById("quantity-plus"),add:document.getElementById("add-cart-button"),buy:document.getElementById("buy-button"),size:document.getElementById("selected-size"),unavailable:document.getElementById("unavailable")};
+if(!produtoP){location.href="catalogo.html";}else{
+ const disponivel=CLTS.produtoEstaDisponivel(produtoP);
+ els.name.textContent=produtoP.nome;els.cat.textContent=catP;els.desc.textContent=produtoP.descricao||"Equipamento para artes marciais.";els.price.textContent=Number(produtoP.preco||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});els.code.textContent=`${catP}-${produtoP.id}`;els.img.src=produtoP.imagem||"images/logo-clts.png";els.img.onerror=()=>{els.img.src="images/logo-clts.png"};
+ if(!disponivel){els.unavailable.classList.add("show");els.add.disabled=true;els.buy.disabled=true;els.size.disabled=true;els.minus.disabled=true;els.plus.disabled=true;}
+ function add(irCheckout=false){if(!disponivel){CLTS.mostrarToast("Este produto está indisponível.");return;}const u=CLTS.obterUsuario();if(!u){location.href="login.html";return;}const cart=CLTS.carregarCarrinho();const size=els.size.value||"";const key=`${catP}-${produtoP.id}-${size}`;const existing=cart.find(i=>i.chave===key);if(existing)existing.quantidade+=Number(els.qty.textContent||1);else cart.push({chave:key,id:produtoP.id,categoria:catP,nome:produtoP.nome,preco:produtoP.preco,imagem:produtoP.imagem,tamanho:size,quantidade:Number(els.qty.textContent||1)});CLTS.salvarCarrinho(cart);CLTS.mostrarToast("Produto adicionado ao carrinho.");if(irCheckout)setTimeout(()=>location.href="carrinho.html",350);}
+ els.minus.onclick=()=>{let q=Math.max(1,Number(els.qty.textContent)-1);els.qty.textContent=q};els.plus.onclick=()=>{let q=Math.min(99,Number(els.qty.textContent)+1);els.qty.textContent=q};els.add.onclick=()=>add(false);els.buy.onclick=()=>add(true);
+}
+document.getElementById("go-cart")?.addEventListener("click",()=>location.href=CLTS.obterUsuario()?"carrinho.html":"login.html");

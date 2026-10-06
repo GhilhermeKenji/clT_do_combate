@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Login — CLTS do Combate"
+  >
+
+  <title>Login | CLTS do Combate</title>
+
+
+  <!-- =====================================================
+       FONTE
+  ====================================================== -->
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+
+  <style>
+
+    /* =====================================================
+       RESET
+    ====================================================== */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    /* =====================================================
+       VARIÁVEIS
+    ====================================================== */
+
+    :root {
+      --cyan: #00e8ff;
+      --cyan2: #10cce5;
+
+      --dark: #02080d;
+      --panel: #06131d;
+
+      --text: #f7fbff;
+      --muted: #9baab5;
+    }
+
+
+    /* =====================================================
+       HTML / BODY
+    ====================================================== */
+
+    html {
+      min-height: 100%;
+    }
+
+
+    body {
+      min-height: 100vh;
+
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      background: #02080d;
+
+      color: var(--text);
+
+      overflow-x: hidden;
+    }
+
+
+    /* =====================================================
+       PÁGINA
+    ====================================================== */
+
+    .login-page {
+
+      min-height: 100vh;
+
+      position: relative;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 40px 20px;
+
+      overflow: hidden;
+
+      background: #02080d;
+    }
+
+
+    /* =====================================================
+       IMAGEM DE FUNDO
+    ====================================================== */
+
+    .login-page::before {
+
+      content: "";
+
+      position: absolute;
+
+      inset: 0;
+
+      background-image:
+
+        linear-gradient(
+          90deg,
+          rgba(2, 8, 13, .88) 0%,
+          rgba(2, 8, 13, .65) 45%,
+          rgba(2, 8, 13, .40) 100%
+        ),
+
+        url("./images/hero-reference.jpg");
+
+      background-size: cover;
+
+      background-position: center;
+
+      background-repeat: no-repeat;
+
+      z-index: 0;
+
+      transform: scale(1.02);
+    }
+
+
+    /* =====================================================
+       ESCURECIMENTO
+    ====================================================== */
+
+    .login-page::after {
+
+      content: "";
+
+      position: absolute;
+
+      inset: 0;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(0, 0, 0, .15),
+          rgba(0, 0, 0, .35)
+        );
+
+      pointer-events: none;
+
+      z-index: 0;
+    }
+
+
+    /* =====================================================
+       CONTAINER
+    ====================================================== */
+
+    .login-container {
+
+      width: 100%;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      position: relative;
+
+      z-index: 2;
+    }
+
+
+    /* =====================================================
+       CAIXA
+    ====================================================== */
+
+    .login-box {
+
+      width: 100%;
+
+      max-width: 440px;
+
+      padding: 38px 40px 34px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(5, 22, 31, .96),
+          rgba(2, 12, 18, .96)
+        );
+
+      border: 1px solid rgba(0, 232, 255, .50);
+
+      border-radius: 4px;
+
+      box-shadow:
+        0 30px 100px rgba(0, 0, 0, .65),
+        0 0 50px rgba(0, 232, 255, .08);
+
+      backdrop-filter: blur(10px);
+
+      text-align: center;
+    }
+
+
+    /* =====================================================
+       LOGO
+    ====================================================== */
+
+    .login-logo {
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      margin-bottom: 25px;
+    }
+
+
+    .login-logo img {
+
+      width: 210px;
+
+      height: auto;
+
+      max-width: 100%;
+
+      display: block;
+    }
+
+
+    /* =====================================================
+       TÍTULO
+    ====================================================== */
+
+    .login-box h1 {
+
+      color: #ffffff;
+
+      font-size: 30px;
+
+      line-height: 1.1;
+
+      font-weight: 800;
+
+      letter-spacing: -1px;
+
+      margin-bottom: 9px;
+    }
+
+
+    .login-subtitle {
+
+      color: #9baab5;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+
+      margin-bottom: 28px;
+    }
+
+
+    /* =====================================================
+       FORMULÁRIO
+    ====================================================== */
+
+    .input-group {
+
+      width: 100%;
+
+      text-align: left;
+
+      margin-bottom: 18px;
+    }
+
+
+    .input-group label {
+
+      display: block;
+
+      color: #f7fbff;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      margin-bottom: 8px;
+    }
+
+
+    .input-group input {
+
+      width: 100%;
+
+      height: 48px;
+
+      padding: 0 14px;
+
+      background: #031019;
+
+      border: 1px solid #294552;
+
+      border-radius: 2px;
+
+      outline: none;
+
+      color: #ffffff;
+
+      font-size: 13px;
+
+      transition:
+        border-color .2s,
+        box-shadow .2s;
+    }
+
+
+    .input-group input::placeholder {
+
+      color: #607785;
+    }
+
+
+    .input-group input:focus {
+
+      border-color: var(--cyan);
+
+      box-shadow:
+        0 0 0 2px rgba(0, 232, 255, .08);
+    }
+
+
+    /* =====================================================
+       OPÇÕES
+    ====================================================== */
+
+    .login-options {
+
+      width: 100%;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 15px;
+
+      margin: 6px 0 23px;
+
+      font-size: 12px;
+    }
+
+
+    .remember {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      color: #9baab5;
+
+      cursor: pointer;
+
+      white-space: nowrap;
+    }
+
+
+    .remember input {
+
+      width: 13px;
+
+      height: 13px;
+
+      accent-color: var(--cyan);
+
+      cursor: pointer;
+    }
+
+
+    .login-options a {
+
+      color: var(--cyan);
+
+      font-weight: 800;
+
+      text-decoration: none;
+
+      white-space: nowrap;
+    }
+
+
+    .login-options a:hover {
+
+      text-decoration: underline;
+    }
+
+
+    /* =====================================================
+       BOTÃO ENTRAR
+    ====================================================== */
+
+    .login-button {
+
+      width: 100%;
+
+      height: 50px;
+
+      border: 1px solid var(--cyan);
+
+      border-radius: 0;
+
+      background: var(--cyan);
+
+      color: #001016;
+
+      font-size: 14px;
+
+      font-weight: 800;
+
+      cursor: pointer;
+
+      transition:
+        background .2s,
+        transform .2s,
+        box-shadow .2s;
+    }
+
+
+    .login-button:hover {
+
+      background: var(--cyan2);
+
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 12px 30px rgba(0, 232, 255, .22);
+    }
+
+
+    .login-button:active {
+
+      transform: translateY(0);
+    }
+
+
+    /* =====================================================
+       DIVISÓRIA
+    ====================================================== */
+
+    .login-divider {
+
+      width: 100%;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 14px;
+
+      margin: 28px 0;
+
+      color: #60717d;
+
+      font-size: 12px;
+    }
+
+
+    .login-divider::before,
+    .login-divider::after {
+
+      content: "";
+
+      height: 1px;
+
+      flex: 1;
+
+      background: #243740;
+    }
+
+
+    /* =====================================================
+       CRIAR CONTA
+    ====================================================== */
+
+    .create-account {
+
+      color: #9baab5;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+    }
+
+
+    .create-account a {
+
+      color: var(--cyan);
+
+      font-weight: 800;
+
+      text-decoration: none;
+
+      cursor: pointer;
+    }
+
+
+    .create-account a:hover {
+
+      text-decoration: underline;
+    }
+
+
+    /* =====================================================
+       VOLTAR PARA LOJA
+    ====================================================== */
+
+    .back-store {
+
+      display: inline-block;
+
+      margin-top: 24px;
+
+      color: #71818c;
+
+      font-size: 12px;
+
+      text-decoration: none;
+
+      transition: color .2s;
+    }
+
+
+    .back-store:hover {
+
+      color: var(--cyan);
+    }
+
+
+    /* =====================================================
+       RESPONSIVO
+    ====================================================== */
+
+    @media (max-width: 600px) {
+
+      .login-page {
+
+        padding: 25px 16px;
+      }
+
+
+      .login-box {
+
+        max-width: 100%;
+
+        padding: 30px 22px;
+      }
+
+
+      .login-logo img {
+
+        width: 180px;
+      }
+
+
+      .login-box h1 {
+
+        font-size: 26px;
+      }
+
+
+      .login-subtitle {
+
+        font-size: 12px;
+
+        margin-bottom: 24px;
+      }
+
+
+      .login-options {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+      }
+
+
+      .login-options a {
+
+        align-self: flex-end;
+      }
+
+    }
+
+
+    @media (max-width: 380px) {
+
+      .login-box {
+
+        padding: 26px 18px;
+      }
+
+
+      .login-logo img {
+
+        width: 160px;
+      }
+
+
+      .login-box h1 {
+
+        font-size: 23px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <main class="login-page">
+
+
+    <div class="login-container">
+
+
+      <section class="login-box">
+
+
+        <!-- =================================================
+             LOGO
+        ================================================== -->
+
+        <a
+          href="Index.html"
+          class="login-logo"
+          aria-label="CLTS do Combate - início"
+        >
+
+          <img
+            src="./images/logo-clts.png"
+            alt="CLTS do Combate"
+          >
+
+        </a>
+
+
+        <!-- =================================================
+             TÍTULO
+        ================================================== -->
+
+        <h1>
+          Bem-vindo de volta
+        </h1>
+
+
+        <p class="login-subtitle">
+          Entre na sua conta para continuar.
+        </p>
+
+
+        <!-- =================================================
+             FORMULÁRIO
+        ================================================== -->
+
+        <form
+          id="loginForm"
+          novalidate
+        >
+
+
+          <!-- E-MAIL -->
+
+          <div class="input-group">
+
+            <label for="email">
+              E-mail
+            </label>
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Digite seu e-mail"
+              autocomplete="email"
+              required
+            >
+
+          </div>
+
+
+          <!-- SENHA -->
+
+          <div class="input-group">
+
+            <label for="password">
+              Senha
+            </label>
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Digite sua senha"
+              autocomplete="current-password"
+              required
+            >
+
+          </div>
+
+
+          <!-- =================================================
+               OPÇÕES
+          ================================================== -->
+
+          <div class="login-options">
+
+
+            <label class="remember">
+
+              <input
+                type="checkbox"
+                name="remember"
+              >
+
+              <span>
+                Lembrar de mim
+              </span>
+
+            </label>
+
+
+            <a
+              href="#"
+              id="forgotPassword"
+            >
+              Esqueci minha senha
+            </a>
+
+
+          </div>
+
+
+          <!-- =================================================
+               BOTÃO ENTRAR
+          ================================================== -->
+
+          <button
+            type="submit"
+            class="login-button"
+          >
+            Entrar
+          </button>
+
+
+        </form>
+
+
+        <!-- =================================================
+             DIVISÓRIA
+        ================================================== -->
+
+        <div class="login-divider">
+
+          <span>
+            ou
+          </span>
+
+        </div>
+
+
+        <!-- =================================================
+             CRIAR CONTA
+        ================================================== -->
+
+        <p class="create-account">
+
+          Ainda não tem uma conta?
+
+          <a
+            href="./cadastro.html"
+            id="createAccountButton"
+          >
+            Criar conta
+          </a>
+
+        </p>
+
+
+        <!-- =================================================
+             VOLTAR
+        ================================================== -->
+
+        <a
+          href="Index.html"
+          class="back-store"
+        >
+          ← Voltar para a loja
+        </a>
+
+
+      </section>
+
+
+    </div>
+
+
+  </main>
+
+
+  <!-- =====================================================
+       SISTEMA DE LOGIN
+  ====================================================== -->
+
+  <script>
+
+    "use strict";
+
+
+    /* =====================================================
+       ELEMENTOS
+    ====================================================== */
+
+    const loginForm =
+      document.getElementById(
+        "loginForm"
+      );
+
+
+    const forgotPassword =
+      document.getElementById(
+        "forgotPassword"
+      );
+
+
+    /* =====================================================
+       E-MAIL DO ADMIN
+    ====================================================== */
+
+    const EMAIL_ADMIN =
+      "sosocudetrovao@gmail.com";
+
+
+    /* =====================================================
+       ESQUECI MINHA SENHA
+    ====================================================== */
+
+    if (forgotPassword) {
+
+      forgotPassword.addEventListener(
+        "click",
+        function(event) {
+
+          event.preventDefault();
+
+          alert(
+            "A recuperação de senha será adicionada quando o sistema tiver um servidor."
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       LOGIN
+    ====================================================== */
+
+    if (loginForm) {
+
+      loginForm.addEventListener(
+        "submit",
+        function(event) {
+
+          event.preventDefault();
+
+
+          /* ===============================================
+             PEGAR DADOS
+          =============================================== */
+
+          const emailInput =
+            document.getElementById(
+              "email"
+            );
+
+
+          const passwordInput =
+            document.getElementById(
+              "password"
+            );
+
+
+          const email =
+            emailInput
+              .value
+              .trim()
+              .toLowerCase();
+
+
+          const senha =
+            passwordInput.value;
+
+
+          /* ===============================================
+             VALIDAR CAMPOS
+          =============================================== */
+
+          if (!email) {
+
+            alert(
+              "Digite seu e-mail."
+            );
+
+            emailInput.focus();
+
+            return;
+
+          }
+
+
+          if (!senha) {
+
+            alert(
+              "Digite sua senha."
+            );
+
+            passwordInput.focus();
+
+            return;
+
+          }
+
+
+          /* ===============================================
+             CARREGAR USUÁRIOS
+          =============================================== */
+
+          let usuarios = [];
+
+
+          try {
+
+            const usuariosSalvos =
+              localStorage.getItem(
+                "clts-usuarios"
+              );
+
+
+            if (usuariosSalvos) {
+
+              usuarios =
+                JSON.parse(
+                  usuariosSalvos
+                );
+
+            }
+
+
+            if (
+              !Array.isArray(
+                usuarios
+              )
+            ) {
+
+              usuarios = [];
+
+            }
+
+          } catch (erro) {
+
+            console.error(
+              "Erro ao carregar usuários:",
+              erro
+            );
+
+            usuarios = [];
+
+          }
+
+
+          /* ===============================================
+             PROCURAR USUÁRIO
+          =============================================== */
+
+          const usuario =
+            usuarios.find(
+              function(item) {
+
+                const emailUsuario =
+                  String(
+                    item.email || ""
+                  )
+                    .trim()
+                    .toLowerCase();
+
+
+                return (
+                  emailUsuario === email &&
+                  item.senha === senha
+                );
+
+              }
+            );
+
+
+          /* ===============================================
+             LOGIN INVÁLIDO
+          =============================================== */
+
+          if (!usuario) {
+
+            alert(
+              "E-mail ou senha incorretos."
+            );
+
+            return;
+
+          }
+
+
+          /* ===============================================
+             SALVAR USUÁRIO LOGADO
+          =============================================== */
+
+          localStorage.setItem(
+            "clts-usuario-logado",
+            JSON.stringify(
+              usuario
+            )
+          );
+
+
+          /* ===============================================
+             VERIFICAR ADMIN
+          =============================================== */
+
+          if (
+            email === EMAIL_ADMIN
+          ) {
+
+            localStorage.setItem(
+              "clts-admin-logado",
+              "true"
+            );
+
+
+            window.location.href =
+              "admin.html";
+
+
+            return;
+
+          }
+
+
+          /* ===============================================
+             USUÁRIO NORMAL
+          =============================================== */
+
+          localStorage.removeItem(
+            "clts-admin-logado"
+          );
+
+
+          window.location.href =
+            "Index.html";
+
+        }
+      );
+
+    }
+
+  </script>
+
+
+</body>
+
+</html>

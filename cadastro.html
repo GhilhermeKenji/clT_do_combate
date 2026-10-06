@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Cadastro — CLTS do Combate"
+  >
+
+  <title>Cadastro | CLTS do Combate</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --cyan: #00e8ff;
+      --cyan2: #10cce5;
+      --dark: #02080d;
+      --panel: #06131d;
+      --text: #f7fbff;
+      --muted: #9baab5;
+      --line: #294552;
+      --danger: #ff5c5c;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .register-page {
+      min-height: 100vh;
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 40px 20px;
+
+      overflow: hidden;
+
+      background: var(--dark);
+    }
+
+    .register-page::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background-image:
+        linear-gradient(
+          90deg,
+          rgba(2, 8, 13, .90) 0%,
+          rgba(2, 8, 13, .68) 45%,
+          rgba(2, 8, 13, .42) 100%
+        ),
+        url("./images/hero-reference.jpg");
+
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      z-index: 0;
+
+      transform: scale(1.02);
+    }
+
+    .register-page::after {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(0, 0, 0, .15),
+          rgba(0, 0, 0, .38)
+        );
+
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .register-container {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      position: relative;
+      z-index: 2;
+    }
+
+    .register-box {
+      width: 100%;
+      max-width: 480px;
+
+      padding: 36px 40px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(5, 22, 31, .97),
+          rgba(2, 12, 18, .97)
+        );
+
+      border: 1px solid rgba(0, 232, 255, .50);
+
+      border-radius: 4px;
+
+      box-shadow:
+        0 30px 100px rgba(0, 0, 0, .65),
+        0 0 50px rgba(0, 232, 255, .08);
+
+      backdrop-filter: blur(10px);
+    }
+
+    .register-logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      margin-bottom: 24px;
+    }
+
+    .register-logo img {
+      width: 210px;
+      height: auto;
+      max-width: 100%;
+      display: block;
+    }
+
+    .register-box h1 {
+      color: #fff;
+
+      text-align: center;
+
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 800;
+
+      letter-spacing: -1px;
+
+      margin-bottom: 9px;
+    }
+
+    .register-subtitle {
+      color: var(--muted);
+
+      text-align: center;
+
+      font-size: 13px;
+      line-height: 1.5;
+
+      margin-bottom: 28px;
+    }
+
+    .input-group {
+      width: 100%;
+      margin-bottom: 17px;
+    }
+
+    .input-group label {
+      display: block;
+
+      color: #f7fbff;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      margin-bottom: 8px;
+    }
+
+    .input-group input {
+      width: 100%;
+      height: 48px;
+
+      padding: 0 14px;
+
+      background: #031019;
+
+      border: 1px solid var(--line);
+      border-radius: 2px;
+
+      outline: none;
+
+      color: #fff;
+
+      font-size: 13px;
+
+      transition:
+        border-color .2s,
+        box-shadow .2s;
+    }
+
+    .input-group input::placeholder {
+      color: #607785;
+    }
+
+    .input-group input:focus {
+      border-color: var(--cyan);
+
+      box-shadow:
+        0 0 0 2px rgba(0, 232, 255, .08);
+    }
+
+    .input-group input.invalid {
+      border-color: var(--danger);
+    }
+
+    .field-error {
+      display: none;
+
+      color: var(--danger);
+
+      font-size: 11px;
+
+      margin-top: 6px;
+    }
+
+    .field-error.show {
+      display: block;
+    }
+
+    .terms {
+      display: flex;
+      align-items: flex-start;
+
+      gap: 9px;
+
+      margin: 8px 0 22px;
+
+      color: var(--muted);
+
+      font-size: 12px;
+      line-height: 1.5;
+
+      cursor: pointer;
+    }
+
+    .terms input {
+      width: 14px;
+      height: 14px;
+
+      margin-top: 2px;
+
+      flex-shrink: 0;
+
+      accent-color: var(--cyan);
+
+      cursor: pointer;
+    }
+
+    .terms a {
+      color: var(--cyan);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .terms a:hover {
+      text-decoration: underline;
+    }
+
+    .register-button {
+      width: 100%;
+      height: 50px;
+
+      border: 1px solid var(--cyan);
+      border-radius: 0;
+
+      background: var(--cyan);
+
+      color: #001016;
+
+      font-size: 14px;
+      font-weight: 800;
+
+      cursor: pointer;
+
+      transition:
+        background .2s,
+        transform .2s,
+        box-shadow .2s;
+    }
+
+    .register-button:hover {
+      background: var(--cyan2);
+
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 12px 30px rgba(0, 232, 255, .22);
+    }
+
+    .register-button:active {
+      transform: translateY(0);
+    }
+
+    .register-button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .register-divider {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+
+      gap: 14px;
+
+      margin: 26px 0;
+
+      color: #60717d;
+
+      font-size: 12px;
+    }
+
+    .register-divider::before,
+    .register-divider::after {
+      content: "";
+
+      height: 1px;
+      flex: 1;
+
+      background: #243740;
+    }
+
+    .login-link {
+      color: var(--muted);
+
+      text-align: center;
+
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .login-link a {
+      color: var(--cyan);
+
+      font-weight: 800;
+
+      text-decoration: none;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .back-store {
+      display: block;
+
+      width: fit-content;
+
+      margin: 22px auto 0;
+
+      color: #71818c;
+
+      font-size: 12px;
+
+      text-decoration: none;
+
+      transition: color .2s;
+    }
+
+    .back-store:hover {
+      color: var(--cyan);
+    }
+
+    .success-message {
+      display: none;
+
+      padding: 13px 14px;
+
+      margin-bottom: 18px;
+
+      border: 1px solid rgba(0, 232, 255, .35);
+
+      background: rgba(0, 232, 255, .07);
+
+      color: var(--cyan);
+
+      font-size: 12px;
+
+      line-height: 1.5;
+
+      text-align: center;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+
+      .register-page {
+        padding: 25px 16px;
+      }
+
+      .register-box {
+        max-width: 100%;
+        padding: 30px 22px;
+      }
+
+      .register-logo img {
+        width: 180px;
+      }
+
+      .register-box h1 {
+        font-size: 26px;
+      }
+
+    }
+
+    @media (max-width: 380px) {
+
+      .register-box {
+        padding: 26px 18px;
+      }
+
+      .register-logo img {
+        width: 160px;
+      }
+
+      .register-box h1 {
+        font-size: 23px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <main class="register-page">
+
+    <div class="register-container">
+
+      <section class="register-box">
+
+        <!-- LOGO -->
+
+        <a
+          href="Index.html"
+          class="register-logo"
+          aria-label="CLTS do Combate - início"
+        >
+
+          <img
+            src="./images/logo-clts.png"
+            alt="CLTS do Combate"
+          >
+
+        </a>
+
+
+        <!-- TÍTULO -->
+
+        <h1>
+          Criar sua conta
+        </h1>
+
+
+        <p class="register-subtitle">
+          Cadastre-se para comprar seus equipamentos.
+        </p>
+
+
+        <!-- MENSAGEM -->
+
+        <div
+          id="successMessage"
+          class="success-message"
+        >
+          Conta criada com sucesso! Entrando na loja...
+        </div>
+
+
+        <!-- FORMULÁRIO -->
+
+        <form id="registerForm" novalidate>
+
+
+          <!-- NOME -->
+
+          <div class="input-group">
+
+            <label for="name">
+              Nome completo
+            </label>
+
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Digite seu nome"
+              autocomplete="name"
+              required
+            >
+
+            <small
+              id="nameError"
+              class="field-error"
+            ></small>
+
+          </div>
+
+
+          <!-- E-MAIL -->
+
+          <div class="input-group">
+
+            <label for="email">
+              E-mail
+            </label>
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Digite seu e-mail"
+              autocomplete="email"
+              required
+            >
+
+            <small
+              id="emailError"
+              class="field-error"
+            ></small>
+
+          </div>
+
+
+          <!-- TELEFONE -->
+
+          <div class="input-group">
+
+            <label for="phone">
+              Telefone
+            </label>
+
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="(11) 99999-9999"
+              autocomplete="tel"
+              maxlength="15"
+              required
+            >
+
+            <small
+              id="phoneError"
+              class="field-error"
+            ></small>
+
+          </div>
+
+
+          <!-- SENHA -->
+
+          <div class="input-group">
+
+            <label for="password">
+              Senha
+            </label>
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Crie uma senha"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            >
+
+            <small
+              id="passwordError"
+              class="field-error"
+            ></small>
+
+          </div>
+
+
+          <!-- CONFIRMAR SENHA -->
+
+          <div class="input-group">
+
+            <label for="confirmPassword">
+              Confirmar senha
+            </label>
+
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Digite a senha novamente"
+              autocomplete="new-password"
+              minlength="6"
+              required
+            >
+
+            <small
+              id="confirmPasswordError"
+              class="field-error"
+            ></small>
+
+          </div>
+
+
+          <!-- TERMOS -->
+
+          <label class="terms">
+
+            <input
+              type="checkbox"
+              id="terms"
+              name="terms"
+            >
+
+            <span>
+              Eu aceito os
+              <a href="#" onclick="return false;">
+                termos e condições
+              </a>
+              da CLTS do Combate.
+            </span>
+
+          </label>
+
+
+          <!-- BOTÃO -->
+
+          <button
+            type="submit"
+            class="register-button"
+            id="registerButton"
+          >
+            Criar conta
+          </button>
+
+        </form>
+
+
+        <!-- DIVISÓRIA -->
+
+        <div class="register-divider">
+
+          <span>
+            ou
+          </span>
+
+        </div>
+
+
+        <!-- LOGIN -->
+
+        <p class="login-link">
+
+          Já possui uma conta?
+
+          <a href="login.html">
+            Entrar
+          </a>
+
+        </p>
+
+
+        <!-- VOLTAR -->
+
+        <a
+          href="Index.html"
+          class="back-store"
+        >
+          ← Voltar para a loja
+        </a>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- SISTEMA DE CADASTRO -->
+
+  <script src="cadastro.js"></script>
+
+</body>
+
+</html>
