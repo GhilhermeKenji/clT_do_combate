@@ -1,5 +1,5 @@
 /* ==========================================================
-   CLTS DO COMBATE — CATALOGO.JS
+   CLTS DO COMBATE — CATALOGO.JS (Versão Otimizada & Avançada)
 ========================================================== */
 "use strict";
 
@@ -46,21 +46,41 @@ function carregarProdutos() {
 }
 function categoriaProduto(p) { return p.categoria || p.modalidade || ""; }
 function nomeCategoria(c) { return nomesCategorias[c] || c || "Artes Marciais"; }
-function chaveProduto(p) { return `${categoriaProduto(p)}-${p.id}`; }
-function imagemFallback(img) {
-  img.onerror = null;
-  img.src = "images/logo-clts.png";
-}
 function combina(p, pesquisa) {
   const campos = [p.nome,p.descricao,categoriaProduto(p),nomeCategoria(categoriaProduto(p))];
   return campos.some(c => normalizar(c).includes(pesquisa));
 }
 
+// Gestão de Favoritos (Wishlist)
+function obterFavoritos() {
+  try {
+    return JSON.parse(localStorage.getItem("clts-favoritos") || "[]");
+  } catch { return []; }
+}
+function alternarFavorito(id, cat) {
+  let favs = obterFavoritos();
+  const index = favs.findIndex(f => String(f.id) === String(id) && String(f.categoria) === String(cat));
+  if (index >= 0) {
+    favs.splice(index, 1);
+    mostrarMensagemCatalogo("Removido dos favoritos.");
+  } else {
+    favs.push({ id, categoria: cat });
+    mostrarMensagemCatalogo("Adicionado aos favoritos ❤️");
+  }
+  localStorage.setItem("clts-favoritos", JSON.stringify(favs));
+  renderizarCatalogo();
+}
+
 function filtrarProdutos() {
   let lista = [...produtosDoCatalogo];
-  if (categoriaAtual !== "todos") {
+  
+  if (categoriaAtual === "favoritos") {
+    const favs = obterFavoritos();
+    lista = lista.filter(p => favs.some(f => String(f.id) === String(p.id) && String(f.categoria) === String(categoriaProduto(p))));
+  } else if (categoriaAtual !== "todos") {
     lista = lista.filter(p => normalizar(categoriaProduto(p)) === normalizar(categoriaAtual));
   }
+
   const pesquisa = normalizar(searchInput?.value.trim() || "");
   if (pesquisa) lista = lista.filter(p => combina(p,pesquisa));
 
@@ -76,7 +96,11 @@ function renderizarCatalogo() {
   const lista = filtrarProdutos();
   productsGrid.innerHTML = "";
   if (productCount) productCount.textContent = `${lista.length} ${lista.length === 1 ? "produto encontrado" : "produtos encontrados"}`;
-  if (catalogTitle) catalogTitle.textContent = nomeCategoria(categoriaAtual);
+  
+  if (catalogTitle) {
+    if (categoriaAtual === "favoritos") catalogTitle.textContent = "Meus Produtos Favoritos";
+    else catalogTitle.textContent = nomeCategoria(categoriaAtual);
+  }
 
   if (!lista.length) {
     if (emptyState) emptyState.style.display = "block";
@@ -90,6 +114,9 @@ function criarCardProduto(produto) {
   const card = document.createElement("article");
   const categoria = categoriaProduto(produto);
   const disponivel = produto.disponivel !== false;
+  const favs = obterFavoritos();
+  const eFavorito = favs.some(f => String(f.id) === String(produto.id) && String(f.categoria) === String(categoria));
+
   card.className = `product-card ${disponivel ? "" : "is-unavailable"}`;
   card.dataset.id = produto.id;
   card.dataset.categoria = categoria;
@@ -101,6 +128,9 @@ function criarCardProduto(produto) {
       <span class="product-badge ${disponivel ? "" : "unavailable"}">
         ${disponivel ? "DISPONÍVEL" : "INDISPONÍVEL"}
       </span>
+      <button type="button" class="fav-btn ${eFavorito ? "active" : ""}" title="Favoritar" data-fav-id="${produto.id}" data-fav-cat="${categoria}">
+        ${eFavorito ? "❤️" : "🤍"}
+      </button>
     </div>
     <div class="product-info">
       <span class="product-category">${nomeCategoria(categoria)}</span>
@@ -113,8 +143,15 @@ function criarCardProduto(produto) {
         <span class="product-buy-arrow">${disponivel ? "→" : "×"}</span>
       </button>
     </div>`;
+
   const img = card.querySelector("img");
-  img.addEventListener("error",()=>imagemFallback(img));
+  img.addEventListener("error",() => { img.onerror=null; img.src="images/logo-clts.png"; });
+  
+  card.querySelector(".fav-btn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    alternarFavorito(produto.id, categoria);
+  });
+
   return card;
 }
 
@@ -152,38 +189,17 @@ function mostrarMensagemCatalogo(texto) {
   clearTimeout(window.__catalogToast); window.__catalogToast=setTimeout(()=>el.classList.remove("show"),2200);
 }
 
-function criarSugestoesBusca() {
-  if (!searchInput || document.getElementById("search-suggestions")) return;
-  const container=document.createElement("div");
-  container.id="search-suggestions"; container.className="search-suggestions";
-  searchInput.parentElement.appendChild(container);
-  function mostrar() {
-    const q=normalizar(searchInput.value.trim()); container.innerHTML="";
-    if (!q) {container.style.display="none"; return;}
-    const encontrados=produtosDoCatalogo.filter(p=>combina(p,q)).slice(0,6);
-    encontrados.forEach(p=>{
-      const b=document.createElement("button"); b.type="button"; b.className="search-suggestion";
-      b.innerHTML=`<strong>${p.nome}</strong><small>${nomeCategoria(categoriaProduto(p))} · ${formatarPreco(p.preco)}${p.disponivel===false?" · Indisponível":""}</small>`;
-      b.addEventListener("click",()=>abrirProduto(categoriaProduto(p),p.id));
-      container.appendChild(b);
-    });
-    if (!encontrados.length) container.innerHTML='<div class="search-no-results">Nenhum produto encontrado.</div>';
-    container.style.display="block";
-  }
-  searchInput.addEventListener("input",()=>{mostrar();renderizarCatalogo();});
-  searchInput.addEventListener("focus",mostrar);
-  document.addEventListener("click",e=>{if(!searchInput.parentElement.contains(e.target))container.style.display="none";});
-}
-sortSelect?.addEventListener("change",renderizarCatalogo);
+sortSelect?.addEventListener("change", renderizarCatalogo);
 
 function iniciarCatalogo() {
-  produtosDoCatalogo=carregarProdutos();
-  const q=new URLSearchParams(location.search).get("busca") || "";
-  if (searchInput && q) searchInput.value=q;
+  produtosDoCatalogo = carregarProdutos();
+  const q = new URLSearchParams(location.search).get("busca") || "";
+  if (searchInput && q) searchInput.value = q;
   atualizarCategoriaAtiva();
   renderizarCatalogo();
-  criarSugestoesBusca();
+  
+  searchInput?.addEventListener("input", renderizarCatalogo);
 }
+
 if (document.readyState==="loading") document.addEventListener("DOMContentLoaded",iniciarCatalogo); else iniciarCatalogo();
-window.addEventListener("storage",()=>{produtosDoCatalogo=carregarProdutos();renderizarCatalogo();});
-window.addEventListener("pageshow",()=>{produtosDoCatalogo=carregarProdutos();renderizarCatalogo();});
+window.addEventListener("storage", () => { produtosDoCatalogo = carregarProdutos(); renderizarCatalogo(); });

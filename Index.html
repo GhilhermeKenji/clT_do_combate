@@ -295,6 +295,7 @@
       <img
         src="images/logo-clts.png"
         alt="CLTS do Combate"
+        onerror="this.onerror=null;this.src='images/logo-clts.png';"
       >
 
     </a>
@@ -396,6 +397,7 @@
 
         <input
           type="search"
+          id="globalSearchInput"
           placeholder="Pesquisar produtos..."
           aria-label="Pesquisar produtos"
         >
@@ -441,7 +443,9 @@
 
       <button
         class="icon-btn cart-btn"
+        id="headerCartBtn"
         aria-label="Carrinho"
+        type="button"
       >
 
         <svg
@@ -559,6 +563,7 @@
           <button
             class="btn btn-secondary"
             id="kitButton"
+            type="button"
           >
 
             Montar meu kit
@@ -840,7 +845,7 @@
           <img
             class="featured-media"
             src="images/jiu-jitsu.jpg"
-            onerror="this.onerror=null;this.src='images/jiu-jitsu.svg'"
+            onerror="this.onerror=null;this.src='images/logo-clts.png';"
             alt="Kimono branco de jiu-jitsu com faixa preta"
             width="400"
             height="400"
@@ -898,7 +903,7 @@
             <img
               class="small-media"
               src="images/judo.jpg"
-              onerror="this.onerror=null;this.src='images/judo.svg'"
+              onerror="this.onerror=null;this.src='images/logo-clts.png';"
               alt="Kimono de judô"
               width="400"
               height="400"
@@ -951,7 +956,7 @@
             <img
               class="small-media"
               src="images/muay-thai.jpg"
-              onerror="this.onerror=null;this.src='images/muay-thai.svg'"
+              onerror="this.onerror=null;this.src='images/logo-clts.png';"
               alt="Caneleiras de muay thai"
               width="400"
               height="400"
@@ -1004,7 +1009,7 @@
             <img
               class="small-media"
               src="images/boxe.jpg"
-              onerror="this.onerror=null;this.src='images/boxe.svg'"
+              onerror="this.onerror=null;this.src='images/logo-clts.png';"
               alt="Luvas de boxe"
               width="400"
               height="400"
@@ -1057,7 +1062,7 @@
             <img
               class="small-media"
               src="images/karate.jpg"
-              onerror="this.onerror=null;this.src='images/karate.svg'"
+              onerror="this.onerror=null;this.src='images/logo-clts.png';"
               alt="Kimono de karatê"
               width="400"
               height="400"
@@ -1090,7 +1095,9 @@
 
 
 
-  <!-- JAVASCRIPT -->
+  <!-- SCRIPTS -->
+
+  <script src="produtos.js"></script>
 
   <script src="Script.js"></script>
 

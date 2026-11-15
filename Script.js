@@ -1,152 +1,107 @@
-/* =========================================================
-   CLTS DO COMBATE — SCRIPT GLOBAL
-========================================================= */
+/* ==========================================================
+   CLTS DO COMBATE — SCRIPT.JS (Motor Global Unificado)
+========================================================== */
 "use strict";
 
-const USER_KEY = "clts-usuario-logado";
-const ADMIN_KEY = "clts-admin-logado";
-const PRODUCTS_KEY = "clts-produtos";
+window.CLTS = window.CLTS || {};
 
-function obterUsuarioLogado() {
+// Gestão do Utilizador
+window.CLTS.obterUsuario = function() {
   try {
-    const salvo = localStorage.getItem(USER_KEY);
-    return salvo ? JSON.parse(salvo) : null;
-  } catch { return null; }
-}
+    return JSON.parse(localStorage.getItem("clts-usuario-logado") || null);
+  } catch {
+    return null;
+  }
+};
 
-function obterChaveCarrinho() {
-  const usuario = obterUsuarioLogado();
-  if (!usuario) return null;
-  const id = usuario.id || usuario.email;
-  return id ? `clts-carrinho-${encodeURIComponent(String(id))}` : null;
-}
+window.CLTS.terminarSessao = function() {
+  localStorage.removeItem("clts-usuario-logado");
+  localStorage.removeItem("clts-admin-logado");
+};
 
-function carregarCarrinhoGlobal() {
-  const chave = obterChaveCarrinho();
-  if (!chave) return [];
+// Chave única de carrinho baseada no utilizador (ou anónimo)
+window.CLTS.obterChaveCarrinho = function() {
+  const usuario = CLTS.obterUsuario();
+  return usuario ? `clts-carrinho-${usuario.email}` : "clts-carrinho-anonimo";
+};
+
+// Carregar Carrinho
+window.CLTS.carregarCarrinho = function() {
   try {
-    const carrinho = JSON.parse(localStorage.getItem(chave) || "[]");
-    return Array.isArray(carrinho) ? carrinho : [];
-  } catch { return []; }
+    const chave = CLTS.obterChaveCarrinho();
+    return JSON.parse(localStorage.getItem(chave) || "[]");
+  } catch {
+    return [];
+  }
+};
+
+// Guardar Carrinho
+window.CLTS.salvarCarrinho = function(carrinho) {
+  try {
+    const chave = CLTS.obterChaveCarrinho();
+    localStorage.setItem(chave, JSON.stringify(carrinho));
+    CLTS.atualizarContadorCarrinho();
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+// Adicionar Animação CSS para o Contador do Carrinho
+if (!document.getElementById("cart-pulse-style")) {
+  const style = document.createElement("style");
+  style.id = "cart-pulse-style";
+  style.textContent = `
+    @keyframes cartPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.35); color: #fff; background: #ff0055; }
+      100% { transform: scale(1); }
+    }
+    .cart-pulsing {
+      animation: cartPulse 0.35s ease-in-out;
+    }
+  `;
+  document.head.appendChild(style);
 }
 
-function salvarCarrinhoGlobal(carrinho) {
-  const chave = obterChaveCarrinho();
-  if (!chave) return false;
-  localStorage.setItem(chave, JSON.stringify(Array.isArray(carrinho) ? carrinho : []));
-  atualizarContadorCarrinho();
-  return true;
-}
-
-function contarItensCarrinho() {
-  return carregarCarrinhoGlobal().reduce((total, item) => total + Number(item.quantidade || 1), 0);
-}
-
-function atualizarContadorCarrinho() {
-  const qtd = contarItensCarrinho();
-  document.querySelectorAll("#cartCount, #header-cart-count, [data-cart-count]").forEach(el => {
-    el.textContent = qtd;
+// Atualizar Contador do Carrinho no Cabeçalho
+window.CLTS.atualizarContadorCarrinho = function() {
+  const carrinho = CLTS.carregarCarrinho();
+  const totalItens = carrinho.reduce((acc, item) => acc + Number(item.quantidade || 1), 0);
+  
+  document.querySelectorAll("[data-cart-count], #cartCount").forEach(el => {
+    if (el.textContent != totalItens) {
+      el.textContent = totalItens;
+      el.classList.add("cart-pulsing");
+      setTimeout(() => el.classList.remove("cart-pulsing"), 350);
+    }
   });
-}
+};
 
-function mostrarToastGlobal(mensagem) {
-  let toast = document.getElementById("toast");
+// Sistema de Notificações Toast Global
+window.CLTS.mostrarToast = function(mensagem) {
+  let toast = document.getElementById("global-toast-msg");
   if (!toast) {
     toast = document.createElement("div");
-    toast.id = "toast";
+    toast.id = "global-toast-msg";
     toast.className = "global-toast";
     document.body.appendChild(toast);
   }
   toast.textContent = mensagem;
   toast.classList.add("show");
-  clearTimeout(window.__cltsToast);
-  window.__cltsToast = setTimeout(() => toast.classList.remove("show"), 2500);
-}
+  clearTimeout(window.__toastTimeout);
+  window.__toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2200);
+};
 
-function obterProdutosAtuais() {
-  let lista = [];
-  try {
-    const salvo = localStorage.getItem(PRODUCTS_KEY);
-    if (salvo) {
-      const parsed = JSON.parse(salvo);
-      if (Array.isArray(parsed)) lista = parsed;
-    }
-  } catch {}
-  if (!lista.length && typeof produtos !== "undefined" && Array.isArray(produtos)) {
-    lista = produtos.map(p => ({ ...p, disponivel: p.disponivel !== false }));
-  }
-  return lista;
-}
+// Inicialização automática ao carregar qualquer página
+document.addEventListener("DOMContentLoaded", () => {
+  CLTS.atualizarContadorCarrinho();
 
-function chaveProdutoGlobal(produto) {
-  return `${String(produto.categoria || produto.modalidade || "").toLowerCase()}-${String(produto.id)}`;
-}
-
-function produtoEstaDisponivel(produto) {
-  return produto && produto.disponivel !== false;
-}
-
-function atualizarContaGlobal() {
-  const btn = document.getElementById("accountButton");
-  if (!btn) return;
-  const usuario = obterUsuarioLogado();
-  if (!usuario) {
-    btn.href = "login.html";
-    btn.title = "Entrar";
-    return;
-  }
-  btn.href = "perfil.html";
-  btn.title = `Minha conta — ${usuario.nome || "cliente"}`;
-}
-
-function atualizarAdminGlobal() {
-  const btn = document.getElementById("adminButton");
-  if (!btn) return;
-  btn.style.display = localStorage.getItem(ADMIN_KEY) === "true" ? "flex" : "none";
-}
-
-function configurarCarrinhoGlobal() {
-  document.querySelectorAll(".cart-btn, .catalog-cart").forEach(btn => {
+  // Sincronizar clique no botão do carrinho do cabeçalho
+  document.querySelectorAll(".cart-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      if (!obterUsuarioLogado()) {
-        window.location.href = "login.html";
-        return;
-      }
-      window.location.href = "carrinho.html";
+      location.href = "carrinho.html";
     });
   });
-}
-
-
-const campoBuscaGlobal = document.querySelector(".search input");
-campoBuscaGlobal?.addEventListener("keydown", event => {
-  if (event.key !== "Enter") return;
-  const termo = campoBuscaGlobal.value.trim();
-  if (!termo) return;
-  window.location.href = `catalogo.html?busca=${encodeURIComponent(termo)}`;
 });
-
-function iniciarGlobal() {
-  atualizarContaGlobal();
-  atualizarAdminGlobal();
-  atualizarContadorCarrinho();
-  configurarCarrinhoGlobal();
-}
-
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciarGlobal);
-else iniciarGlobal();
-
-window.addEventListener("storage", iniciarGlobal);
-window.addEventListener("pageshow", iniciarGlobal);
-
-window.CLTS = {
-  obterUsuario: obterUsuarioLogado,
-  obterChaveCarrinho,
-  carregarCarrinho: carregarCarrinhoGlobal,
-  salvarCarrinho: salvarCarrinhoGlobal,
-  atualizarContadorCarrinho,
-  mostrarToast: mostrarToastGlobal,
-  obterProdutos: obterProdutosAtuais,
-  produtoEstaDisponivel,
-  chaveProduto: chaveProdutoGlobal
-};
