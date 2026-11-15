@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (elNome) elNome.textContent = usuario.nome || "Cliente";
   if (elEmail) elEmail.textContent = usuario.email || "";
 
-  // Renderizar Histórico de Pedidos
   const containerPedidos = document.getElementById("orders-container");
   if (containerPedidos) {
     try {
@@ -42,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
           div.innerHTML = `
             <div class="order-header">
               <strong>Pedido #${pedido.id}</strong>
-              <span>${new Date(pedido.data).toLocaleDateString("pt-BR")} às ${new Date(pedido.data).toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'})}</span>
+              <span>${new Date(pedido.data).toLocaleDateString("pt-BR")}</span>
             </div>
             <div class="order-body">
               <p><strong>Status:</strong> <span style="color:#00ffb3">${pedido.status}</span></p>
@@ -52,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ${pedido.cupom ? `<p style="color:#00e8ff; margin-top:6px;"><strong>Cupom aplicado:</strong> ${pedido.cupom} (-${formatoMoeda.format(pedido.desconto || 0)})</p>` : ""}
             </div>
             <div class="order-footer">
-              <span style="color:#8799a4; font-size:12px;">Total com Frete (${formatoMoeda.format(pedido.frete || 19.90)}):</span>
+              <span style="color:#8799a4; font-size:12px;">Total com Frete:</span>
               <span style="color:#fff; font-size:15px;">${formatoMoeda.format(pedido.total)}</span>
             </div>
           `;
@@ -64,9 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Logout
-  const btnLogout = document.getElementById("logout-btn");
-  btnLogout?.addEventListener("click", () => {
+  document.getElementById("logout-btn")?.addEventListener("click", () => {
     CLTS.terminarSessao();
     location.href = "login.html";
   });

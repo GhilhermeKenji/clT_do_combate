@@ -1,3 +1,37 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Carrinho | CLTS do Combate</title><link rel="stylesheet" href="carrinho.css"></head><body>
-<header class="header"><a class="logo" href="Index.html"><img src="images/logo-clts.png" alt="CLTS"></a><nav><a href="Index.html">Início</a><a href="catalogo.html">Catálogo</a></nav><a class="back" href="catalogo.html">Continuar comprando</a></header>
-<main class="cart-page"><h1>Seu carrinho</h1><p class="subtitle">Revise seus produtos antes de finalizar.</p><div class="cart-layout"><section><div id="cart-items"></div><div id="empty-cart" class="empty" style="display:none"><h2>Seu carrinho está vazio</h2><a href="catalogo.html">Ver produtos</a></div></section><aside class="summary"><h2>Resumo</h2><div><span>Subtotal</span><strong id="subtotal">R$ 0,00</strong></div><div><span>Frete</span><strong id="shipping">A calcular</strong></div><hr><div class="total"><span>Total</span><strong id="total">R$ 0,00</strong></div><div class="cep"><label for="cep">CEP</label><div><input id="cep" inputmode="numeric" maxlength="9" placeholder="00000-000"><button id="calculate-shipping">CALCULAR</button></div><small id="shipping-message"></small></div><button id="checkout-button" class="checkout">FINALIZAR COMPRA</button><p class="warning">Produtos que ficarem indisponíveis não entram no total e bloqueiam a finalização até serem removidos.</p></aside></div></main><div id="toast" class="toast"></div><script src="produtos.js"></script><script src="Script.js"></script><script src="carrinho.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Carrinho | CLTS do Combate</title>
+<link rel="stylesheet" href="catalogo.css">
+<style>
+.cart-page{width:min(900px,92%);margin:40px auto 100px}
+.cart-item{display:flex;justify-content:space-between;align-items:center;background:#071923;border:1px solid #193d4b;padding:15px;margin-bottom:12px}
+.cart-actions{display:flex;gap:15px;align-items:center}
+.btn-checkout{display:block;width:100%;text-align:center;background:#00e8ff;color:#001016;padding:15px;font-weight:900;text-decoration:none;margin-top:20px}
+.btn-checkout:hover{background:#10cce5}
+</style>
+</head>
+<body>
+<header class="header">
+  <a href="Index.html" class="logo"><img src="images/logo-clts.png" alt="CLTS"></a>
+  <a href="catalogo.html" style="color:#00e8ff;text-decoration:none;font-weight:800;font-size:12px;">← Continuar a comprar</a>
+</header>
+<main class="cart-page">
+  <h1>O seu Carrinho</h1>
+  <div id="cart-items-container" style="margin-top:20px;"></div>
+  <div id="cart-summary" style="background:#071923;border:1px solid #193d4b;padding:25px;margin-top:20px;">
+    <h2>Resumo</h2>
+    <div style="display:flex;justify-content:space-between;margin:15px 0;font-size:18px;">
+      <span>Total:</span>
+      <strong id="cart-total" style="color:#00e8ff;">R$ 0,00</strong>
+    </div>
+    <a href="finalizar-compra.html" class="btn-checkout">FINALIZAR COMPRA</a>
+  </div>
+</main>
+<script src="produtos.js"></script>
+<script src="Script.js"></script>
+<script src="carrinho.js"></script>
+</body>
+</html>

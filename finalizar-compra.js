@@ -1,5 +1,5 @@
 /* ==========================================================
-   CLTS DO COMBATE — FINALIZAR-COMPRA.JS (Completo e Corrigido)
+   CLTS DO COMBATE — FINALIZAR-COMPRA.JS
 ========================================================== */
 "use strict";
 
@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const carrinho = CLTS.carregarCarrinho();
   if (carrinho.length === 0) {
     CLTS.mostrarToast("O seu carrinho está vazio.");
-    setTimeout(() => { location.href = "carrinho.html"; }, 1000);
+    setTimeout(() => {
+      location.href = "carrinho.html";
+    }, 1000);
     return;
   }
 
@@ -25,7 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const containerItens = document.getElementById("checkout-items");
   const elSubtotal = document.getElementById("subtotal");
   const elTotal = document.getElementById("total");
-  const formatoMoeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+  const formatoMoeda = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
 
   let subtotal = 0;
   if (containerItens) {
@@ -37,10 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const div = document.createElement("div");
       div.className = "checkout-item-summary";
-      div.innerHTML = `
-        <span>${item.nome} ${item.tamanho ? `(Tam: ${item.tamanho})` : ""} x${qtd}</span>
-        <span>${formatoMoeda.format(preco * qtd)}</span>
-      `;
+      div.innerHTML = `<span>${item.nome} ${item.tamanho ? `(Tam: ${item.tamanho})` : ""} x${qtd}</span><span>${formatoMoeda.format(preco * qtd)}</span>`;
       containerItens.appendChild(div);
     });
   }
@@ -71,38 +73,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const msgCupom = document.getElementById("cupom-msg");
 
   btnCupom?.addEventListener("click", () => {
-    const codigo = inputCupom ? inputCupom.value.trim().toUpperCase() : "";
+    const codigo = inputCupom.value.trim().toUpperCase();
     if (!codigo) return;
 
     if (codigo === "COMBATE10") {
       desconto = subtotal * 0.10;
       cupomAplicado = "COMBATE10 (10% OFF)";
-      if (msgCupom) {
-        msgCupom.style.color = "#00ffb3";
-        msgCupom.textContent = "Cupom aplicado com sucesso (-10%)!";
-      }
+      msgCupom.style.color = "#00ffb3";
+      msgCupom.textContent = "Cupom aplicado com sucesso (-10%)!";
     } else if (codigo === "COMBATE20") {
-      desconto = 20.00;
+      desconto = Math.min(subtotal, 20.00);
       cupomAplicado = "COMBATE20 (R$ 20 OFF)";
-      if (msgCupom) {
-        msgCupom.style.color = "#00ffb3";
-        msgCupom.textContent = "Cupom aplicado com sucesso (-R$ 20,00)!";
-      }
+      msgCupom.style.color = "#00ffb3";
+      msgCupom.textContent = "Cupom aplicado com sucesso (-R$ 20,00)!";
     } else {
       desconto = 0;
       cupomAplicado = null;
-      if (msgCupom) {
-        msgCupom.style.color = "#ff9d9d";
-        msgCupom.textContent = "Cupom inválido ou expirado.";
-      }
+      msgCupom.style.color = "#ff9d9d";
+      msgCupom.textContent = "Cupom inválido ou expirado.";
     }
     atualizarTotais();
   });
 
-  const form = document.getElementById("checkout-form");
-  form?.addEventListener("submit", (e) => {
+  document.getElementById("checkout-form")?.addEventListener("submit", e => {
     e.preventDefault();
-
     const totalFinal = Math.max(0, subtotal - desconto) + frete;
     const novoPedido = {
       id: Math.floor(100000 + Math.random() * 900000),
@@ -130,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const pedidosSalvos = JSON.parse(localStorage.getItem("clts-pedidos") || "[]");
       pedidosSalvos.push(novoPedido);
       localStorage.setItem("clts-pedidos", JSON.stringify(pedidosSalvos));
-
       localStorage.removeItem(CLTS.obterChaveCarrinho());
       CLTS.atualizarContadorCarrinho();
 
@@ -139,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         location.href = "perfil.html";
       }, 1200);
     } catch (err) {
-      CLTS.mostrarToast("Erro ao processar o pedido. Tente novamente.");
+      CLTS.mostrarToast("Erro ao processar o pedido.");
     }
   });
 
