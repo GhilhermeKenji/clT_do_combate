@@ -5,6 +5,11 @@
 
 window.CLTS = window.CLTS || {};
 
+window.CLTS.EMAILS_ADMIN = [
+  "guilhermecanada93@gmail.com",
+  "gui.kenn1221@gmail.com"
+];
+
 window.CLTS.normalizarTexto = function(str) {
   return String(str || "")
     .normalize("NFD")
@@ -29,6 +34,15 @@ window.CLTS.obterUsuario = function() {
   } catch {
     return null;
   }
+};
+
+window.CLTS.ehAdmin = function() {
+  const usuario = CLTS.obterUsuario();
+  const email = String(usuario?.email || "").trim().toLowerCase();
+  return (
+    localStorage.getItem("clts-admin-logado") === "true" ||
+    CLTS.EMAILS_ADMIN.includes(email)
+  );
 };
 
 window.CLTS.terminarSessao = function() {
@@ -87,6 +101,66 @@ window.CLTS.salvarCarrinho = function(carrinho) {
   } catch (e) {
     console.error("Erro ao salvar carrinho:", e);
   }
+};
+
+/* ==========================================================
+   INTEGRAÇÃO COM O PAINEL ADMIN (PRODUTOS E CUPONS)
+========================================================== */
+window.CLTS.obterProdutos = function() {
+  try {
+    const salvos = JSON.parse(localStorage.getItem("clts-produtos") || "[]");
+    if (Array.isArray(salvos) && salvos.length > 0) {
+      return salvos;
+    }
+  } catch {}
+  if (typeof produtos !== "undefined" && Array.isArray(produtos)) return produtos;
+  if (Array.isArray(window.produtos)) return window.produtos;
+  return [];
+};
+
+window.CLTS.validarCupom = function(codigoDigitado, subtotal) {
+  const codigo = String(codigoDigitado || "").trim().toUpperCase();
+  if (!codigo) {
+    return { valido: false, desconto: 0, mensagem: "Digite um código de cupom." };
+  }
+
+  let cupons = [];
+  try {
+    cupons = JSON.parse(localStorage.getItem("clts-cupons") || "[]");
+  } catch {
+    cupons = [];
+  }
+
+  if (!Array.isArray(cupons) || cupons.length === 0) {
+    cupons = [
+      { codigo: "COMBATE10", tipo: "percent", valor: 10, ativo: true },
+      { codigo: "COMBATE20", tipo: "fixed", valor: 20, ativo: true }
+    ];
+  }
+
+  const cupom = cupons.find(
+    c => String(c.codigo || "").trim().toUpperCase() === codigo && c.ativo !== false
+  );
+
+  if (!cupom) {
+    return { valido: false, desconto: 0, mensagem: "Cupom inválido ou desativado." };
+  }
+
+  let desconto = 0;
+  if (cupom.tipo === "percent") {
+    desconto = Number(subtotal || 0) * (Number(cupom.valor) / 100);
+  } else {
+    desconto = Number(cupom.valor);
+  }
+
+  desconto = Math.min(desconto, Number(subtotal || 0));
+
+  return {
+    valido: true,
+    cupom: cupom,
+    desconto: desconto,
+    mensagem: `Cupom ${cupom.codigo} aplicado com sucesso!`
+  };
 };
 
 if (!document.getElementById("clts-global-styles")) {
@@ -158,6 +232,17 @@ window.CLTS.mostrarToast = function(mensagem) {
 
 window.CLTS.atualizarHeaderUsuario = function() {
   const usuario = CLTS.obterUsuario();
+  const adminBtn = document.getElementById("adminButton");
+
+  if (adminBtn) {
+    if (CLTS.ehAdmin()) {
+      adminBtn.style.display = "inline-flex";
+      localStorage.setItem("clts-admin-logado", "true");
+    } else {
+      adminBtn.style.display = "none";
+    }
+  }
+
   if (!usuario) return;
 
   document.querySelectorAll('a[href="login.html"], a[href="./login.html"]').forEach(link => {
