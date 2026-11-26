@@ -2,62 +2,522 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Finalizar compra | CLTS do Combate</title>
-  <link rel="stylesheet" href="finalizar-compra.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar Compra — CLTS do Combate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #020b11;
+      color: #f7fbff;
+      font-family: Inter, system-ui, sans-serif;
+      min-height: 100vh;
+    }
+    .topbar {
+      background: #030f17;
+      border-bottom: 1px solid #133240;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar img { height: 36px; display: block; }
+    .back-link {
+      color: #00e8ff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .checkout-container {
+      max-width: 1180px;
+      margin: 34px auto;
+      padding: 0 24px 60px;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .card {
+      background: #05141e;
+      border: 1px solid #143645;
+      padding: 26px;
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #143645;
+      color: #ffffff;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #9ab0bd;
+    }
+    .input-ctrl {
+      height: 44px;
+      padding: 0 12px;
+      background: #020b11;
+      border: 1px solid #1d4454;
+      color: #f7fbff;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+    .input-ctrl:focus { border-color: #00e8ff; }
+    .payment-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .pay-card {
+      border: 1px solid #1d4454;
+      background: #020b11;
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      transition: all 0.2s ease;
+    }
+    .pay-card.active {
+      border-color: #00e8ff;
+      background: rgba(0, 232, 255, 0.08);
+      color: #00e8ff;
+    }
+    .pay-card input { accent-color: #00e8ff; }
+    .cart-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #102b38;
+    }
+    .summary-item img {
+      width: 54px;
+      height: 54px;
+      object-fit: cover;
+      border: 1px solid #163746;
+      background: #020b11;
+    }
+    .summary-item-info { flex: 1; }
+    .summary-item-info h4 { font-size: 13px; font-weight: 800; margin-bottom: 3px; }
+    .summary-item-info span { font-size: 12px; color: #8ca1ae; }
+    .summary-item-price { font-size: 13px; font-weight: 800; color: #00e8ff; }
+    .coupon-box {
+      margin: 18px 0;
+      padding: 14px;
+      background: #030e15;
+      border: 1px dashed #1f495b;
+    }
+    .coupon-row { display: flex; gap: 8px; }
+    .coupon-row input { flex: 1; text-transform: uppercase; }
+    .btn-coupon {
+      height: 44px;
+      padding: 0 18px;
+      background: transparent;
+      border: 1px solid #00e8ff;
+      color: #00e8ff;
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .btn-coupon:hover { background: rgba(0, 232, 255, 0.12); }
+    .coupon-msg {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      display: none;
+    }
+    .coupon-msg.ok { display: block; color: #00e676; }
+    .coupon-msg.err { display: block; color: #ff4d79; }
+    .totals-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid #143645;
+      padding-top: 16px;
+      font-size: 14px;
+    }
+    .total-row { display: flex; justify-content: space-between; color: #b7c9d4; }
+    .total-row.discount { color: #00e676; font-weight: 700; }
+    .total-row.grand {
+      font-size: 20px;
+      font-weight: 900;
+      color: #ffffff;
+      border-top: 1px solid #143645;
+      padding-top: 14px;
+      margin-top: 6px;
+    }
+    .total-row.grand span:last-child { color: #00e8ff; }
+    .btn-finish {
+      width: 100%;
+      height: 52px;
+      margin-top: 20px;
+      background: #00e8ff;
+      color: #001016;
+      border: none;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: filter 0.2s ease;
+    }
+    .btn-finish:hover { filter: brightness(1.08); }
+    @media (max-width: 860px) {
+      .checkout-container, .form-grid, .payment-options { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-<header class="header">
-  <a href="Index.html"><img src="images/logo-clts.png" alt="CLTS"></a>
-  <a href="carrinho.html">← Voltar ao carrinho</a>
-</header>
-<main class="checkout-page">
-  <h1>Finalizar compra</h1>
-  <p class="sub">Preencha seus dados para concluir o pedido.</p>
-  <form id="checkout-form">
-    <section>
-      <h2>Entrega</h2>
-      <div class="grid">
-        <label>Nome<input id="nome" required></label>
-        <label>E-mail<input id="email" type="email" required></label>
-        <label>CEP<input id="cep" required maxlength="9"></label>
-        <label>Endereço<input id="endereco" required></label>
-        <label>Número<input id="numero" required></label>
-        <label>Cidade<input id="cidade" required></label>
-        <label>Estado<input id="estado" required maxlength="2"></label>
-      </div>
-      <h2>Pagamento</h2>
-      <label>Forma de pagamento
-        <select id="pagamento">
-          <option>Pix</option>
-          <option>Cartão de crédito</option>
-          <option>Boleto</option>
-        </select>
-      </label>
-    </section>
-    <aside>
-      <h2>Resumo</h2>
-      <div id="checkout-items" class="checkout-items-wrapper"></div>
-      <hr>
-      <div class="cupom-box">
-        <div class="cupom-input-row">
-          <input id="cupom-input" placeholder="Cupom de desconto">
-          <button type="button" id="btn-cupom">APLICAR</button>
+
+  <header class="topbar">
+    <a href="Index.html">
+      <img src="images/logo-clts.png" alt="CLTS do Combate">
+    </a>
+    <a href="carrinho.html" class="back-link">← Voltar ao carrinho</a>
+  </header>
+
+  <main class="checkout-container">
+    <div>
+      <form id="checkoutForm">
+        <div class="card">
+          <h2>1. Dados do Comprador</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="chkNome">Nome Completo *</label>
+              <input type="text" id="chkNome" class="input-ctrl" required>
+            </div>
+            <div class="form-group">
+              <label for="chkEmail">E-mail *</label>
+              <input type="email" id="chkEmail" class="input-ctrl" required>
+            </div>
+            <div class="form-group">
+              <label for="chkCpf">CPF *</label>
+              <input type="text" id="chkCpf" class="input-ctrl" placeholder="000.000.000-00" required>
+            </div>
+            <div class="form-group">
+              <label for="chkTelefone">WhatsApp / Telefone *</label>
+              <input type="text" id="chkTelefone" class="input-ctrl" placeholder="(11) 99999-9999" required>
+            </div>
+          </div>
         </div>
-        <p id="cupom-msg"></p>
+
+        <div class="card">
+          <h2>2. Endereço de Entrega</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="chkCep">CEP *</label>
+              <input type="text" id="chkCep" class="input-ctrl" placeholder="00000-000" required>
+            </div>
+            <div class="form-group">
+              <label for="chkCidade">Cidade *</label>
+              <input type="text" id="chkCidade" class="input-ctrl" required>
+            </div>
+            <div class="form-group full">
+              <label for="chkEndereco">Rua / Avenida e Bairro *</label>
+              <input type="text" id="chkEndereco" class="input-ctrl" required>
+            </div>
+            <div class="form-group">
+              <label for="chkNumero">Número *</label>
+              <input type="text" id="chkNumero" class="input-ctrl" required>
+            </div>
+            <div class="form-group">
+              <label for="chkEstado">Estado (UF) *</label>
+              <input type="text" id="chkEstado" class="input-ctrl" placeholder="SP" maxlength="2" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>3. Forma de Pagamento</h2>
+          <div class="payment-options">
+            <label class="pay-card active" id="payPixLabel">
+              <input type="radio" name="pagamento" value="PIX" checked>
+              <span>⚡ PIX (Aprovação Imediata)</span>
+            </label>
+            <label class="pay-card" id="payCardLabel">
+              <input type="radio" name="pagamento" value="Cartão de Crédito">
+              <span>💳 Cartão de Crédito</span>
+            </label>
+          </div>
+
+          <div id="cardFields" style="display:none; margin-top:14px;">
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Número do Cartão</label>
+                <input type="text" class="input-ctrl" placeholder="0000 0000 0000 0000">
+              </div>
+              <div class="form-group">
+                <label>Validade</label>
+                <input type="text" class="input-ctrl" placeholder="MM/AA">
+              </div>
+              <div class="form-group">
+                <label>CVV</label>
+                <input type="text" class="input-ctrl" placeholder="123" maxlength="4">
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <aside class="card">
+      <h2>Resumo do Pedido</h2>
+
+      <div class="cart-items-list" id="checkoutItemsList"></div>
+
+      <div class="coupon-box">
+        <label style="font-size:12px; font-weight:800; display:block; margin-bottom:8px; color:#c8d8e2;">
+          Possui um cupom de desconto?
+        </label>
+        <div class="coupon-row">
+          <input type="text" id="inputCupom" class="input-ctrl" placeholder="Ex: COMBATE10">
+          <button type="button" id="btnAplicarCupom" class="btn-coupon">Aplicar</button>
+        </div>
+        <div id="couponMessage" class="coupon-msg"></div>
       </div>
-      <hr>
-      <div><span>Subtotal</span><strong id="subtotal">R$ 0,00</strong></div>
-      <div id="desconto-linha" style="display:none; color:#00ffb3;"><span>Desconto</span><strong id="desconto-valor">-R$ 0,00</strong></div>
-      <div><span>Frete</span><strong id="shipping">R$ 19,90</strong></div>
-      <div class="total"><span>Total</span><strong id="total">R$ 0,00</strong></div>
-      <button class="finish" type="submit" id="finish-button">CONFIRMAR PEDIDO</button>
-      <p id="checkout-message"></p>
+
+      <div class="totals-list">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span id="resumoSubtotal">R$ 0,00</span>
+        </div>
+        <div class="total-row">
+          <span>Frete</span>
+          <span id="resumoFrete">R$ 19,90</span>
+        </div>
+        <div class="total-row discount" id="rowDesconto" style="display:none;">
+          <span id="labelDesconto">Desconto</span>
+          <span id="resumoDesconto">- R$ 0,00</span>
+        </div>
+        <div class="total-row grand">
+          <span>Total</span>
+          <span id="resumoTotal">R$ 0,00</span>
+        </div>
+      </div>
+
+      <button type="submit" form="checkoutForm" class="btn-finish">Finalizar Pedido</button>
     </aside>
-  </form>
-</main>
-<script src="produtos.js"></script>
-<script src="Script.js"></script>
-<script src="finalizar-compra.js"></script>
+  </main>
+
+  <script src="Script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const FRETE_PADRAO = 19.90;
+      let cupomAplicado = null;
+
+      function formatarMoeda(valor) {
+        return Number(valor || 0).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        });
+      }
+
+      // Preenche dados do usuário logado via CLTS.obterUsuario()
+      const user = CLTS.obterUsuario();
+      if (user) {
+        if (user.nome) document.getElementById("chkNome").value = user.nome;
+        if (user.email) document.getElementById("chkEmail").value = user.email;
+      }
+
+      const itemsListEl = document.getElementById("checkoutItemsList");
+
+      function calcularSubtotal(carrinho) {
+        return carrinho.reduce((acc, item) => {
+          const qtd = Number(item.quantidade || 1);
+          return acc + Number(item.preco || 0) * qtd;
+        }, 0);
+      }
+
+      function renderizarResumo() {
+        const carrinho = CLTS.carregarCarrinho();
+        itemsListEl.innerHTML = "";
+
+        if (!carrinho.length) {
+          itemsListEl.innerHTML = `<p style="color:#8ca1ae; font-size:13px;">Seu carrinho está vazio. <a href="Index.html" style="color:#00e8ff;">Voltar à loja</a></p>`;
+        } else {
+          carrinho.forEach((item) => {
+            const qtd = Number(item.quantidade || 1);
+            itemsListEl.innerHTML += `
+              <div class="summary-item">
+                <img src="${item.imagem || "images/logo-clts.png"}" onerror="this.src='images/logo-clts.png'" alt="">
+                <div class="summary-item-info">
+                  <h4>${item.nome}</h4>
+                  <span>Qtd: ${qtd}${item.tamanho ? " · Tam: " + item.tamanho : ""}</span>
+                </div>
+                <div class="summary-item-price">${formatarMoeda(Number(item.preco) * qtd)}</div>
+              </div>
+            `;
+          });
+        }
+
+        const subtotal = calcularSubtotal(carrinho);
+        const frete = subtotal > 0 ? FRETE_PADRAO : 0;
+        let desconto = 0;
+
+        if (cupomAplicado && subtotal > 0) {
+          const validacao = CLTS.validarCupom(cupomAplicado.codigo, subtotal);
+          if (validacao.valido) {
+            desconto = validacao.desconto;
+          } else {
+            cupomAplicado = null;
+          }
+        }
+
+        const totalFinal = Math.max(0, subtotal + frete - desconto);
+
+        document.getElementById("resumoSubtotal").textContent = formatarMoeda(subtotal);
+        document.getElementById("resumoFrete").textContent = formatarMoeda(frete);
+
+        const rowDesc = document.getElementById("rowDesconto");
+        if (desconto > 0 && cupomAplicado) {
+          rowDesc.style.display = "flex";
+          document.getElementById("labelDesconto").textContent = `Desconto (${cupomAplicado.codigo})`;
+          document.getElementById("resumoDesconto").textContent = `- ${formatarMoeda(desconto)}`;
+        } else {
+          rowDesc.style.display = "none";
+        }
+
+        document.getElementById("resumoTotal").textContent = formatarMoeda(totalFinal);
+      }
+
+      // Aplicar Cupom via CLTS.validarCupom()
+      const btnAplicarCupom = document.getElementById("btnAplicarCupom");
+      const inputCupom = document.getElementById("inputCupom");
+      const couponMsg = document.getElementById("couponMessage");
+
+      btnAplicarCupom.addEventListener("click", () => {
+        const subtotal = calcularSubtotal(CLTS.carregarCarrinho());
+        const resultado = CLTS.validarCupom(inputCupom.value, subtotal);
+
+        if (!resultado.valido) {
+          cupomAplicado = null;
+          couponMsg.textContent = resultado.mensagem;
+          couponMsg.className = "coupon-msg err";
+          renderizarResumo();
+          return;
+        }
+
+        cupomAplicado = resultado.cupom;
+        const textoDesc = resultado.cupom.tipo === "percent"
+          ? `${resultado.cupom.valor}% de desconto`
+          : `${formatarMoeda(resultado.cupom.valor)} de desconto`;
+
+        couponMsg.textContent = `Cupom ${resultado.cupom.codigo} aplicado (${textoDesc})!`;
+        couponMsg.className = "coupon-msg ok";
+        renderizarResumo();
+      });
+
+      // Forma de pagamento
+      const radiosPag = document.querySelectorAll('input[name="pagamento"]');
+      const cardFields = document.getElementById("cardFields");
+      radiosPag.forEach((radio) => {
+        radio.addEventListener("change", () => {
+          document.getElementById("payPixLabel").classList.toggle("active", radio.value === "PIX" && radio.checked);
+          document.getElementById("payCardLabel").classList.toggle("active", radio.value !== "PIX" && radio.checked);
+          cardFields.style.display = radio.value !== "PIX" && radio.checked ? "block" : "none";
+        });
+      });
+
+      // Finalizar Pedido
+      document.getElementById("checkoutForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const carrinho = CLTS.carregarCarrinho();
+        if (!carrinho.length) {
+          alert("Seu carrinho está vazio!");
+          return;
+        }
+
+        const subtotal = calcularSubtotal(carrinho);
+        const frete = FRETE_PADRAO;
+        let desconto = 0;
+
+        if (cupomAplicado) {
+          const val = CLTS.validarCupom(cupomAplicado.codigo, subtotal);
+          if (val.valido) desconto = val.desconto;
+        }
+
+        const total = Math.max(0, subtotal + frete - desconto);
+        const pagSelecionado = document.querySelector('input[name="pagamento"]:checked')?.value || "PIX";
+
+        const novoPedido = {
+          id: Math.floor(100000 + Math.random() * 900000),
+          data: new Date().toLocaleString("pt-BR"),
+          cliente: {
+            nome: document.getElementById("chkNome").value.trim(),
+            email: document.getElementById("chkEmail").value.trim(),
+            cpf: document.getElementById("chkCpf").value.trim(),
+            telefone: document.getElementById("chkTelefone").value.trim()
+          },
+          endereco: document.getElementById("chkEndereco").value.trim(),
+          numero: document.getElementById("chkNumero").value.trim(),
+          cidade: document.getElementById("chkCidade").value.trim(),
+          estado: document.getElementById("chkEstado").value.trim().toUpperCase(),
+          cep: document.getElementById("chkCep").value.trim(),
+          pagamento: pagSelecionado,
+          cupom: cupomAplicado ? cupomAplicado.codigo : null,
+          desconto: desconto,
+          itens: carrinho.map((it) => ({
+            nome: it.nome,
+            preco: Number(it.preco),
+            quantidade: Number(it.quantidade || 1),
+            tamanho: it.tamanho || "Único"
+          })),
+          total: total,
+          status: pagSelecionado === "PIX" ? "Pago" : "Pendente"
+        };
+
+        let pedidos = [];
+        try {
+          pedidos = JSON.parse(localStorage.getItem("clts-pedidos") || "[]");
+        } catch {
+          pedidos = [];
+        }
+
+        pedidos.push(novoPedido);
+        localStorage.setItem("clts-pedidos", JSON.stringify(pedidos));
+
+        // Limpa o carrinho correto do usuário (ou anónimo) usando a função do Script.js
+        CLTS.salvarCarrinho([]);
+
+        alert(`Pedido #${novoPedido.id} realizado com sucesso!`);
+        window.location.href = "Index.html";
+      });
+
+      renderizarResumo();
+    });
+  </script>
 </body>
 </html>

@@ -1,3 +1,496 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Produto | CLTS do Combate</title><link rel="stylesheet" href="produto.css"></head><body>
-<header class="p-header"><a href="Index.html"><img src="images/logo-clts.png" alt="CLTS"></a><nav><a href="Index.html">Início</a><a href="catalogo.html">Catálogo</a></nav><button class="cart-btn" id="go-cart">🛒 CARRINHO <b id="cartCount">0</b></button></header>
-<main class="product-page"><a class="back" href="javascript:history.back()">← Voltar</a><section class="product-detail"><div class="product-photo"><img id="product-main-image" src="images/logo-clts.png" alt="Produto"></div><div class="product-copy"><span id="product-category"></span><h1 id="product-name">Produto</h1><div class="rating">★★★★★ <small>5.0</small></div><p id="product-description"></p><strong id="product-price">R$ 0,00</strong><div id="unavailable" class="unavailable">PRODUTO INDISPONÍVEL</div><label class="size">Tamanho <select id="selected-size"><option value="">Único</option><option>P</option><option>M</option><option>G</option><option>GG</option></select></label><div class="qty"><button id="quantity-minus">−</button><span id="quantity">1</span><button id="quantity-plus">+</button></div><div class="actions"><button class="primary" id="add-cart-button">ADICIONAR AO CARRINHO</button><button class="secondary" id="buy-button">COMPRAR AGORA</button></div><p class="code">Código: <span id="product-code"></span></p></div></section></main><div id="toast" class="toast"></div><script src="produtos.js"></script><script src="Script.js"></script><script src="produto.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produto — CLTS do Combate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #020b11;
+      color: #f7fbff;
+      font-family: Inter, system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .topbar {
+      background: #030f17;
+      border-bottom: 1px solid #133240;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar img { height: 36px; display: block; }
+    .nav-actions { display: flex; align-items: center; gap: 18px; }
+    .nav-link {
+      color: #c2d1da;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: #00e8ff; }
+
+    .cart-btn {
+      background: #071923;
+      border: 1px solid #1d4454;
+      color: #f7fbff;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cart-btn:hover { border-color: #00e8ff; }
+    .cart-badge {
+      background: #00e8ff;
+      color: #001016;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 900;
+      border-radius: 2px;
+    }
+
+    /* BREADCRUMB */
+    .breadcrumb {
+      max-width: 1200px;
+      margin: 24px auto 0;
+      padding: 0 24px;
+      font-size: 12px;
+      color: #8ca1ae;
+    }
+    .breadcrumb a { color: #00e8ff; text-decoration: none; font-weight: 700; }
+
+    /* DETALHE DO PRODUTO */
+    .product-wrapper {
+      max-width: 1200px;
+      margin: 24px auto 70px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 44px;
+      align-items: start;
+    }
+
+    .gallery-box {
+      background: #04131c;
+      border: 1px solid #143645;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 460px;
+    }
+    .gallery-box img {
+      width: 100%;
+      max-height: 460px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .info-box {
+      background: #04131c;
+      border: 1px solid #143645;
+      padding: 32px;
+    }
+
+    .cat-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #00e8ff;
+      background: rgba(0, 232, 255, 0.1);
+      border: 1px solid rgba(0, 232, 255, 0.35);
+      padding: 4px 10px;
+      margin-bottom: 14px;
+    }
+
+    .prod-title {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .price-block {
+      margin-bottom: 22px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #143645;
+    }
+    .old-price {
+      display: block;
+      font-size: 14px;
+      color: #7d93a0;
+      text-decoration: line-through;
+      margin-bottom: 4px;
+    }
+    .current-price {
+      font-size: 34px;
+      font-weight: 900;
+      color: #00e8ff;
+    }
+    .installments {
+      display: block;
+      font-size: 12px;
+      color: #9ab0bd;
+      margin-top: 6px;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #c2d1da;
+      margin-bottom: 10px;
+    }
+
+    .sizes-grid {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .size-btn {
+      min-width: 48px;
+      height: 42px;
+      padding: 0 14px;
+      background: #020b11;
+      border: 1px solid #1d4454;
+      color: #f7fbff;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .size-btn:hover { border-color: #00e8ff; }
+    .size-btn.selected {
+      background: #00e8ff;
+      color: #001016;
+      border-color: #00e8ff;
+    }
+
+    .qty-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+    .qty-box {
+      display: inline-flex;
+      border: 1px solid #1d4454;
+      background: #020b11;
+    }
+    .qty-box button {
+      width: 40px;
+      height: 44px;
+      background: transparent;
+      border: none;
+      color: #f7fbff;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .qty-box button:hover { color: #00e8ff; }
+    .qty-box span {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .stock-info {
+      font-size: 12px;
+      font-weight: 700;
+      color: #00e676;
+    }
+    .stock-info.out { color: #ff4d79; }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .btn-buy-now {
+      width: 100%;
+      height: 52px;
+      background: #00e8ff;
+      color: #001016;
+      border: none;
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+    .btn-buy-now:hover { filter: brightness(1.08); }
+    .btn-buy-now:disabled {
+      background: #233b46;
+      color: #7d93a0;
+      cursor: not-allowed;
+    }
+
+    .btn-add-cart {
+      width: 100%;
+      height: 48px;
+      background: transparent;
+      border: 1px solid #00e8ff;
+      color: #00e8ff;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-add-cart:hover { background: rgba(0, 232, 255, 0.1); }
+    .btn-add-cart:disabled {
+      border-color: #233b46;
+      color: #7d93a0;
+      cursor: not-allowed;
+    }
+
+    .desc-box {
+      border-top: 1px solid #143645;
+      padding-top: 20px;
+    }
+    .desc-box h3 {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+    .desc-box p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #a9bcc7;
+      white-space: pre-line;
+    }
+
+    .not-found-box {
+      max-width: 600px;
+      margin: 80px auto;
+      background: #04131c;
+      border: 1px solid #143645;
+      padding: 40px;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .product-wrapper { grid-template-columns: 1fr; gap: 24px; }
+      .gallery-box { min-height: 300px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="Index.html">
+      <img src="images/logo-clts.png" alt="CLTS do Combate">
+    </a>
+    <div class="nav-actions">
+      <a href="Index.html" class="nav-link">Início</a>
+      <a href="catalogo.html" class="nav-link">Catálogo</a>
+      <a href="admin.html" id="adminButton" class="nav-link" style="display:none; color:#00e8ff;">👑 ADMIN</a>
+      <a href="login.html" class="nav-link">Minha Conta</a>
+      <button type="button" class="cart-btn">
+        🛒 Carrinho <span class="cart-badge" id="cartCount">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div id="pageContent"></div>
+
+  <script src="produtos.js"></script>
+  <script src="Script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const idUrl = params.get("id");
+      const catUrl = params.get("categoria");
+
+      function formatarMoeda(valor) {
+        return Number(valor || 0).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        });
+      }
+
+      // Lê a lista unificada (Painel Admin clts-produtos + fallback produtos.js)
+      const todosProdutos = CLTS.obterProdutos();
+
+      const produto = todosProdutos.find(p => {
+        const mesmoId = String(p.id) === String(idUrl);
+        if (!catUrl) return mesmoId;
+        return mesmoId && CLTS.normalizarTexto(p.categoria) === CLTS.normalizarTexto(catUrl);
+      }) || todosProdutos.find(p => String(p.id) === String(idUrl));
+
+      const container = document.getElementById("pageContent");
+
+      if (!produto) {
+        container.innerHTML = `
+          <div class="not-found-box">
+            <h2 style="margin-bottom:12px;">Produto não encontrado</h2>
+            <p style="color:#8ca1ae; margin-bottom:24px;">O item que procura pode ter sido removido ou o link está desatualizado.</p>
+            <a href="Index.html" style="display:inline-block; background:#00e8ff; color:#001016; padding:12px 24px; font-weight:900; text-decoration:none;">Voltar para a Loja</a>
+          </div>
+        `;
+        return;
+      }
+
+      document.title = `${produto.nome} — CLTS do Combate`;
+
+      const disponivel = produto.disponivel !== false && Number(produto.estoque ?? 15) > 0;
+      const listaTamanhos = String(produto.tamanhos || "Único")
+        .split(",")
+        .map(t => t.trim())
+        .filter(Boolean);
+
+      let tamanhoSelecionado = listaTamanhos[0] || "Único";
+      let quantidade = 1;
+
+      const precoAntigoHtml = Number(produto.precoAntigo) > Number(produto.preco)
+        ? `<span class="old-price">De: ${formatarMoeda(produto.precoAntigo)}</span>`
+        : "";
+
+      container.innerHTML = `
+        <div class="breadcrumb">
+          <a href="Index.html">Início</a> /
+          <a href="catalogo.html?categoria=${encodeURIComponent(produto.categoria)}">${produto.categoria}</a> /
+          <span>${produto.nome}</span>
+        </div>
+
+        <main class="product-wrapper">
+          <div class="gallery-box">
+            <img src="${produto.imagem || "images/logo-clts.png"}" onerror="this.src='images/logo-clts.png'" alt="${produto.nome}">
+          </div>
+
+          <div class="info-box">
+            <span class="cat-tag">${produto.categoria}</span>
+            <h1 class="prod-title">${produto.nome}</h1>
+
+            <div class="price-block">
+              ${precoAntigoHtml}
+              <strong class="current-price">${formatarMoeda(produto.preco)}</strong>
+              <span class="installments">ou em até 6x de ${formatarMoeda(Number(produto.preco) / 6)} sem juros</span>
+            </div>
+
+            <span class="section-label">Selecione o Tamanho:</span>
+            <div class="sizes-grid" id="sizesContainer">
+              ${listaTamanhos.map((tam, i) => `
+                <button type="button" class="size-btn ${i === 0 ? "selected" : ""}" data-size="${tam}">${tam}</button>
+              `).join("")}
+            </div>
+
+            <span class="section-label">Quantidade:</span>
+            <div class="qty-row">
+              <div class="qty-box">
+                <button type="button" id="btnMenos">−</button>
+                <span id="qtyValue">1</span>
+                <button type="button" id="btnMais">+</button>
+              </div>
+              <span class="stock-info ${disponivel ? "" : "out"}">
+                ${disponivel ? `✓ Em estoque (${produto.estoque ?? 15} disponíveis)` : "✕ Produto indisponível no momento"}
+              </span>
+            </div>
+
+            <div class="cta-group">
+              <button type="button" class="btn-buy-now" id="btnComprarAgora" ${disponivel ? "" : "disabled"}>
+                ${disponivel ? "Comprar Agora" : "Indisponível"}
+              </button>
+              <button type="button" class="btn-add-cart" id="btnAddCarrinho" ${disponivel ? "" : "disabled"}>
+                Adicionar ao Carrinho
+              </button>
+            </div>
+
+            <div class="desc-box">
+              <h3>Descrição e Especificações</h3>
+              <p>${produto.descricao || "Equipamento oficial CLTS do Combate desenvolvido para alta performance e durabilidade nos treinos e competições."}</p>
+            </div>
+          </div>
+        </main>
+      `;
+
+      // Seleção de tamanho
+      document.querySelectorAll(".size-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          tamanhoSelecionado = btn.dataset.size;
+        });
+      });
+
+      // Controle de quantidade
+      const qtySpan = document.getElementById("qtyValue");
+      document.getElementById("btnMenos").addEventListener("click", () => {
+        if (quantidade > 1) {
+          quantidade--;
+          qtySpan.textContent = quantidade;
+        }
+      });
+
+      document.getElementById("btnMais").addEventListener("click", () => {
+        const maxEstoque = Number(produto.estoque ?? 99);
+        if (quantidade < maxEstoque) {
+          quantidade++;
+          qtySpan.textContent = quantidade;
+        }
+      });
+
+      // Adicionar ao carrinho usando o motor global CLTS
+      function adicionarItemAoCarrinho(irParaCheckout = false) {
+        const carrinho = CLTS.carregarCarrinho();
+        const novoItem = {
+          id: produto.id,
+          categoria: produto.categoria,
+          nome: produto.nome,
+          preco: Number(produto.preco),
+          imagem: produto.imagem || "images/logo-clts.png",
+          tamanho: tamanhoSelecionado,
+          quantidade: quantidade
+        };
+
+        const existente = carrinho.find(it => CLTS.mesmoItem(it, novoItem));
+        if (existente) {
+          existente.quantidade = Number(existente.quantidade || 1) + quantidade;
+        } else {
+          carrinho.push(novoItem);
+        }
+
+        CLTS.salvarCarrinho(carrinho);
+
+        if (irParaCheckout) {
+          window.location.href = "finalizar-compra.html";
+        } else {
+          CLTS.mostrarToast(`"${produto.nome}" adicionado ao carrinho!`);
+        }
+      }
+
+      document.getElementById("btnAddCarrinho")?.addEventListener("click", () => {
+        adicionarItemAoCarrinho(false);
+      });
+
+      document.getElementById("btnComprarAgora")?.addEventListener("click", () => {
+        adicionarItemAoCarrinho(true);
+      });
+    });
+  </script>
+</body>
+</html>
